@@ -2,10 +2,10 @@
 
 \d .chess
 
-system"l chess/moves.q";
-system"l chess/config.q";
-system"l chess/locations.q";
-system"l chess/checkmate.q";
+system each "l ",/:ssr[string .z.f;"chess.q";] each ("moves.q";"config.q";"locations.q";"checkmate.q");
+//system"l config.q";
+//system"l locations.q";
+//system"l checkmate.q";
 
 showOptions:{[cords]
   piece:.chess.board . cfg.convertCords cords;
@@ -13,12 +13,14 @@ showOptions:{[cords]
  }
 
 move:{[org;dest]
+  .debug.a:(org;dest);
   ocords:string org;
   dcords:string dest;
   piece:.chess.board . cfg.convertCords org;
   team:$[piece=lower piece;`w;`b];
+  .debug.a2:(piece;team);
   if[not .chess.cfg.turns[team];:"IT IS NOT YOUR TURN!"];
-  if[cfg.check[team]; "YOU ARE IN CHECK!"];
+  if[cfg.check[team]; :"YOU ARE IN CHECK!"];
   if[all not string[dest] in .chess.cfg.availableOptions[piece;string org];:"NOT A VALID MOVE. PLEASE TRY AGAIN."];
   .chess.log.write[team;org;dest];
   location.upd[team;org;dest];

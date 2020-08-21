@@ -5,14 +5,21 @@ cfg.convertCords:{[cords]
   ("I"$string[cords] 1;`$string[cords] 0)
  }
 
+
 cfg.moveOptions:{[piece;ocords]
   $[`p=lower piece;();null piece;:"XX";piece:lower piece];
-  :(.chess.moves[piece] [ocords]) except enlist ocords;
+  :(.chess.moves[piece] [ocords]);
  }
 
+
+// at some point I will might switch to this method, otherwise use separate piece funcs
+//cfg.moveOptions:{[piece;ocords]
+//  $[`p=lower piece;();null piece;:"XX";piece:lower piece];
+//  :(.chess.moves[ocords;moves.direction[piece];moves.maxmoves[piece]])
+// }
+
 cfg.turns:{[team]
-  turn:$[(count .chess.log.file) mod 2;`b;`w];
-  :turn~team
+  team~$[(count .chess.log.file) mod 2;`b;`w]
  }
 
 cfg.opponent:{[team;cords]
@@ -21,21 +28,32 @@ cfg.opponent:{[team;cords]
   :$[null opp;:0b;chkSame opp;:0b;:1b]
  }
 
-cfg.availableOptions: {[piece;ocords]
+//cfg.availableOptions: {[piece;ocords]
+//  list:.chess.cfg.moveOptions[piece;ocords];
+//  if[list~"XX";:()];
+//  if[`p=lower piece;:list];
+//  if[1<count blockers:list where not .chess.cfg.openSpace each list;enlist blockers];
+//  if[1<count options:list where .chess.cfg.openSpace each list;enlist options];
+//  .chess.cfg.blk[ocords;blockers;options]
+// }
+
+// utilizes directions for a more straighforward approach to blockers
+cfg.availableOptions:{[piece;ocords]
+  .debug.x:(piece;ocords);
   list:.chess.cfg.moveOptions[piece;ocords];
+  .debug.x2:(piece;ocords);
   if[list~"XX";:()];
   if[`p=lower piece;:list];
-  if[1<count blockers:list where not .chess.cfg.openSpace[piece;]each list;enlist blockers];
-  if[1<count options:list where .chess.cfg.openSpace[piece;]each list;enlist options];
-  .chess.cfg.blk[ocords;blockers;options]
+  blk:first each {where not cfg.openSpace each x}'[list];
+  m:@[blk;where not null blk;+;] .chess.cfg.opponent[$[piece~lower piece;-1;1]] each moves.spotCheck list@'blk;
+  raze list@'til each count'[list]^m
  }
 
-cfg.openSpace:{[piece;cords]
-  team:$[piece=lower piece;-1;1];
-  $[null board . cfg.convertCords cords;:1b;
-    `p=lower piece;0b;
-    :.chess.cfg.opponent[team;cords]
-   ]
+
+
+// determines if given cords are empty or not
+cfg.openSpace:{[cords]
+  $[null board . cfg.convertCords cords;1b;0b]
  }
 
 cfg.initialize:{[]
@@ -56,8 +74,8 @@ cfg.board:{[]
   ([KEY:reverse 1+til 8]A:8#`;B:8#`;C:8#`;D:8#`;E:8#`;F:8#`;G:8#`;H:8#`)
  }
 
-cfg.blk:{[cords;blocker;options]
-  direction:flip(("i"$blocker[;0])-"i"$cords[0];("i"$blocker[;1])-"i"$cords[1]);
-  blocks:.chess.moves.spotCheck distinct raze{("c"$(y[0]+signum[y[0]]*til 8)+"i"$x[0]),'string (y[1]+signum[y[1]]*til 8)+"I"$x[1]}[cords]@'direction;
-  options except blocks
- }
+//cfg.blk:{[cords;blocker;options]
+//  direction:flip(("i"$blocker[;0])-"i"$cords[0];("i"$blocker[;1])-"i"$cords[1]);
+//  blocks:.chess.moves.spotCheck distinct raze{("c"$(y[0]+signum[y[0]]*til 8)+"i"$x[0]),'string (y[1]+signum[y[1]]*til 8)+"I"$x[1]}[cords]@'direction;
+//  options except blocks
+// }
