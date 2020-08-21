@@ -12,7 +12,7 @@ location.w.all:{raze x `k`q`r`b`n`p}[.chess.location.w.dic];
 
 location.b.all:{raze x `K`Q`R`B`N`P}[.chess.location.b.dic];
 
- location.upd:{[team;ocords;dcords]
+ location.upd:{[board;team;ocords;dcords]
    opp:first `w`b except team;
    piece:board . cfg.convertCords ocords;
    .debug.piece:piece;

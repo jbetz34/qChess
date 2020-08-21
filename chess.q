@@ -12,22 +12,15 @@ showOptions:{[cords]
   cfg.availableOptions[piece;string cords]
  }
 
-move:{[org;dest]
-  .debug.a:(org;dest);
-  ocords:string org;
+move:{[orig;dest]
+  ocords:string orig;
   dcords:string dest;
-  piece:.chess.board . cfg.convertCords org;
+  piece:.chess.board . cfg.convertCords orig;
   team:$[piece=lower piece;`w;`b];
-  .debug.a2:(piece;team);
   if[not .chess.cfg.turns[team];:"IT IS NOT YOUR TURN!"];
-  if[cfg.check[team]; :"YOU ARE IN CHECK!"];
-  if[all not string[dest] in .chess.cfg.availableOptions[piece;string org];:"NOT A VALID MOVE. PLEASE TRY AGAIN."];
-  .chess.log.write[team;org;dest];
-  location.upd[team;org;dest];
-  .chess.board["I"$ocords 1;`$ocords 0]:`;
-  .chess[team][`take].chess.board . cfg.convertCords dest;
-  .chess.board["I"$dcords 1;`$dcords 0]:piece;
-  :.chess.board
+  if[all not dcords in .chess.cfg.availableOptions[piece;ocords];:"NOT A VALID MOVE. PLEASE TRY AGAIN."];
+  res:.chess.cfg.testCheck[orig;dest;team];
+  $[cfg.checkmate first `w`b except team;:"Congrats you have won";res]
  }
 
 b.take:{[piece]
@@ -48,6 +41,7 @@ w.take:{[piece]
  }
 
 log.write:{[team; ocords; dcords]
+  .debug.t,:.z.P;
   if[()~num:1+max .chess.log.file[; 0]; num:1];
   .chess.log.file,:enlist(num; team; ocords; dcords)
  }

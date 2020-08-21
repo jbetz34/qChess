@@ -20,5 +20,10 @@ cfg.check:{[team]
   first .chess[team;`king;`] in `$distinct raze showOptions each location[opp;`all]
  }
 
+// checks if the team provided is in checkmate
+cfg.checkmate:{[team]
+  not any cfg.test[;;team] ./: raze distinct location[team;`all],/:'`$showOptions each location[team;`all]
+ }
+
 b.king:{.chess.location.b.dic`K}
 w.king:{.chess.location.w.dic`k}

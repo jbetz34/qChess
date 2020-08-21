@@ -1,6 +1,8 @@
 \d .chess
 // .chess.cfg
 
+.debug.t:enlist 0np;
+
 cfg.convertCords:{[cords]
   ("I"$string[cords] 1;`$string[cords] 0)
  }
@@ -49,12 +51,43 @@ cfg.availableOptions:{[piece;ocords]
   raze list@'til each count'[list]^m
  }
 
-
-
 // determines if given cords are empty or not
 cfg.openSpace:{[cords]
   $[null board . cfg.convertCords cords;1b;0b]
  }
+
+cfg.test:{[orig;dest;team]
+  tmp:.chess.board;
+  tmpLoc:.chess.location[`w`b];
+  .[`.chess.board;cfg.convertCords dest;:;] tmp . cfg.convertCords orig;
+  .[`.chess.board;cfg.convertCords orig;:;`];
+  .chess.location.upd[tmp;team;orig;dest];
+  res:not cfg.check[team];
+  .chess.board:tmp; 
+  @[`.chess.location;`w`b;:;tmpLoc];
+  res
+ }
+
+
+// test if the move will put/keep team in check. If not, follow move protocol
+cfg.testCheck:{[orig;dest;team]
+  tmp:.chess.board;
+  tmpLoc:.chess.location[`w`b];
+  .[`.chess.board;cfg.convertCords dest;:;] tmp . cfg.convertCords orig;
+  .[`.chess.board;cfg.convertCords orig;:;`];
+  .chess.location.upd[tmp;team;orig;dest];
+  $[not cfg.check[team];
+    [ cfg.recordMove[tmp;orig;dest;team]; .chess.board ];
+    [ .chess.board:tmp; @[`.chess.location;`w`b;:;tmpLoc]; "YOU ARE IN CHECK!" ]
+  ]
+ }
+
+cfg.recordMove:{[board;orig;dest;team]
+  .chess.log.write[team;orig;dest];
+  location.upd[board;team;orig;dest];
+  .chess[team][`take]board . cfg.convertCords dest;
+ }
+
 
 cfg.initialize:{[]
   .chess.board:.chess.cfg.board[];
