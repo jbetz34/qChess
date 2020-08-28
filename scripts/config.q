@@ -2,17 +2,20 @@
 // .chess.cfg
 
 .debug.t:enlist 0np;
+cfg.cs:"";
 
 cfg.convertCords:{[cords]
   ("I"$string[cords] 1;`$string[cords] 0)
  }
 
+cfg.team:{`w`b@x=upper x}
 
 cfg.moveOptions:{[piece;ocords]
   $[`p=lower piece;();null piece;:"XX";piece:lower piece];
   :(.chess.moves[piece] [ocords]);
  }
 
+cfg.castle:{[team;sq] string sq[0] where min each ((not[cfg.check team],location[team;`kingmove]),/:location[team;`arook`hrook]),'{cfg.openSpace'[y],cfg.test[first .chess[x;`king;`];;x]'[y except `B1`B8]}[team] each sq 1 2}
 
 // at some point I will might switch to this method, otherwise use separate piece funcs
 //cfg.moveOptions:{[piece;ocords]
@@ -25,6 +28,7 @@ cfg.turns:{[team]
  }
 
 cfg.opponent:{[team;cords]
+  / team: (white;-1) (black;1)
   $[0>team;chkSame:{x~lower x};chkSame:{x~upper x}];
   opp:board . cfg.convertCords cords;
   :$[null opp;:0b;chkSame opp;:0b;:1b]
@@ -46,6 +50,8 @@ cfg.availableOptions:{[piece;ocords]
   .debug.x2:(piece;ocords);
   if[list~"XX";:()];
   if[`p=lower piece;:list];
+  if[`k=lower piece;list,:enlist each cfg.cs:cfg.castle[cfg.team piece;location[cfg.team piece;`csquares]]];
+  .debug.list:list;
   blk:first each {where not cfg.openSpace each x}'[list];
   m:@[blk;where not null blk;+;] .chess.cfg.opponent[$[piece~lower piece;-1;1]] each moves.spotCheck list@'blk;
   raze list@'til each count'[list]^m

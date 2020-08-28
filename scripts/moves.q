@@ -40,14 +40,27 @@ moves.q:{[cords]
  }
 
 moves.k:{[cords]
-  moves.kingmove:1b;
   moves.generic[cords;moves.direction.k;1]
  }
 
 moves.pawnAttack:{[team;cords]
   atkSpaces:moves.spotCheck ("c"$(-1 1)+"i"$cords[0]),\:string team+"I"$cords[1];
-  :atkSpaces where cfg.opponent[team;]each atkSpaces
+  :atkSpaces where cfg.opponent[neg team;]each atkSpaces
  }
+
+moves.castle:{[orig;dest;team]
+  .chess.location.upd[board;team;orig;dest];
+  .chess.location.upd[board;team;(`G1`C1`G8`C8!`H1`A1`H8`A8)dest;(`G1`C1`G8`C8!`F1`D1`F8`D8)dest];
+  .[`.chess.board;cfg.convertCords dest;:;`k];
+  .[`.chess.board;cfg.convertCords orig;:;`];
+  .[`.chess.board;cfg.convertCords (`G1`C1`G8`C8!`F1`D1`F8`D8)dest;:;(`w`b!`r`R)team];
+  .[`.chess.board;cfg.convertCords (`G1`C1`G8`C8!`H1`A1`H8`A8)dest;:;`];
+  .[`.chess.board;cfg.convertCords dest;:;`k]; 
+  .[`.chess.board;cfg.convertCords orig;:;`];
+  .chess.log.write[team;orig;dest];
+  .chess.board
+ }
+
 
 moves.spotCheck:{[options]
   options where options in cross["ABCDEFGH";string 1+til 8]

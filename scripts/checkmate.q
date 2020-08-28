@@ -17,7 +17,7 @@ cfg.board2space:{
 // checks if the team provided is in check
 cfg.check:{[team]
   opp:first `w`b except team;
-  first .chess[team;`king;`] in `$distinct raze showOptions each location[opp;`all]
+  first .chess[team;`king;`] in .chess[opp;`options] 
  }
 
 // checks if the team provided is in checkmate

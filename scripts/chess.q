@@ -18,8 +18,11 @@ move:{[orig;dest]
   piece:.chess.board . cfg.convertCords orig;
   team:$[piece=lower piece;`w;`b];
   if[not .chess.cfg.turns[team];:"IT IS NOT YOUR TURN!"];
+  .debug.q:1;
   if[all not dcords in .chess.cfg.availableOptions[piece;ocords];:"NOT A VALID MOVE. PLEASE TRY AGAIN."];
-  res:.chess.cfg.testCheck[orig;dest;team];
+  .debug.w:2;
+  res:$[dest in `$cfg.cs;.chess.moves.castle[orig;dest;team];.chess.cfg.testCheck[orig;dest;team]];
+  .debug.e:3;
   $[cfg.checkmate first `w`b except team;:"Congrats you have won";res]
  }
 
@@ -46,4 +49,6 @@ log.write:{[team; ocords; dcords]
   .chess.log.file,:enlist(num; team; ocords; dcords)
  }
 
+.z.ts:{w.options:`$distinct raze showOptions each location[`w;`all];b.options:`$distinct raze showOptions each location[`b;`all];}
+system"t 500";
 start:.chess.cfg.initialize[];
