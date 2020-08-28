@@ -1,8 +1,8 @@
 # qChess
 
 Project still in progress.
-Missing functionality: en-passant, castle
-Known Bugs: pawns cannot capture
+Missing functionality: en-passant, 
+
 
 To Play:
 It is generally convenient to enter the .chess namespace before playing as all commands exist in that domain

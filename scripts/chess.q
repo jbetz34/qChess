@@ -21,7 +21,7 @@ move:{[orig;dest]
   .debug.q:1;
   if[all not dcords in .chess.cfg.availableOptions[piece;ocords];:"NOT A VALID MOVE. PLEASE TRY AGAIN."];
   .debug.w:2;
-  res:$[dest in `$cfg.cs;.chess.moves.castle[orig;dest;team];.chess.cfg.testCheck[orig;dest;team]];
+  res:$[all (`k=lower piece;dest in `$cfg.cs);.chess.moves.castle[orig;dest;team];.chess.cfg.testCheck[orig;dest;team]];
   .debug.e:3;
   $[cfg.checkmate first `w`b except team;:"Congrats you have won";res]
  }
