@@ -1,12 +1,11 @@
 \d .chess
-
 //.chess.moves
 
 // Black Pawn
 moves.P:{[cords]
   res:$[cords[1]="7";
-    :moves.pawnAttack[-1;cords],{x where cfg.openSpace each x} cords[0],/:string ("I"$cords[1])+neg(1 2);
-    :moves.pawnAttack[-1;cords],{x where cfg.openSpace each x }(enlist cords[0],string -1+"I"$cords[1])
+    :moves.enpassant[-1;cords],moves.pawnAttack[-1;cords],{x where cfg.openSpace each x} cords[0],/:string ("I"$cords[1])+neg(1 2);
+    :moves.enpassant[-1;cords],moves.pawnAttack[-1;cords],{x where cfg.openSpace each x }(enlist cords[0],string -1+"I"$cords[1])
    ];
   moves.spotCheck res
  }
@@ -14,8 +13,8 @@ moves.P:{[cords]
 // White Pawn
 moves.p:{[cords]
   res:$[cords[1]="2";
-    :moves.pawnAttack[1;cords],{x where cfg.openSpace each x} cords[0],/:string ("I"$cords[1])+(1 2);
-    :moves.pawnAttack[1;cords],{x where cfg.openSpace each x} (enlist cords[0],string 1+"I"$cords[1])
+    :moves.enpassant[1;cords],moves.pawnAttack[1;cords],{x where cfg.openSpace each x} cords[0],/:string ("I"$cords[1])+(1 2);
+    :moves.enpassant[1;cords],moves.pawnAttack[1;cords],{x where cfg.openSpace each x} (enlist cords[0],string 1+"I"$cords[1])
    ];
   moves.spotCheck res
  }
@@ -46,6 +45,14 @@ moves.k:{[cords]
 moves.pawnAttack:{[team;cords]
   atkSpaces:moves.spotCheck ("c"$(-1 1)+"i"$cords[0]),\:string team+"I"$cords[1];
   :atkSpaces where cfg.opponent[neg team;]each atkSpaces
+ }
+
+moves.enpassant:{[team;cords]
+  atkSpaces:moves.spotCheck ("c"$(-1 1)+"i"$cords[0]),\:string team+"I"$cords[1];
+  enpas:moves.spotCheck ("c"$(-1 1)+"i"$cords[0]),\:string "I"$cords[1];
+  enpas: enpas where cfg.opponent[neg team;]each enpas;
+  startSq:enpas[;0],'string("I"$enpas[;1])+team*2;
+  atkSpaces where (last .chess.log.file)[2 3] in/: enlist each ,'[`$startSq;`$enpas]
  }
 
 moves.castle:{[orig;dest;team]
