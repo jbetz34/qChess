@@ -1,8 +1,8 @@
 # qChess
 
-Project still in progress.
-Missing functionality: en-passant, 
-
+Project is in first draft.
+Complete chess functionality developed. 
+Desired Functionality: Read PGNs, AI
 
 To Play:
 It is generally convenient to enter the .chess namespace before playing as all commands exist in that domain
