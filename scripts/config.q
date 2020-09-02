@@ -82,6 +82,7 @@ cfg.testCheck:{[orig;dest;team]
   .[`.chess.board;cfg.convertCords dest;:;] tmp . cfg.convertCords orig;
   .[`.chess.board;cfg.convertCords orig;:;`];
   .chess.location.upd[tmp;team;orig;dest];
+  .z.ts[];
   $[not cfg.check[team];
     [ cfg.recordMove[tmp;orig;dest;team]; .chess.board ];
     [ .chess.board:tmp; @[`.chess.location;`w`b;:;tmpLoc]; "YOU ARE IN CHECK!" ]

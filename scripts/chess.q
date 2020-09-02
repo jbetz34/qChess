@@ -21,9 +21,14 @@ move:{[orig;dest]
   .debug.q:1;
   if[all not dcords in .chess.cfg.availableOptions[piece;ocords];:"NOT A VALID MOVE. PLEASE TRY AGAIN."];
   .debug.w:2;
-  res:$[all (`k=lower piece;dest in `$cfg.cs);.chess.moves.castle[orig;dest;team];.chess.cfg.testCheck[orig;dest;team]];
+  res:$[all (`k=lower piece;dest in `$cfg.cs);
+		.chess.moves.castle[orig;dest;team];
+	all (`p=lower piece;dest in `$moves.enpassant[(`w`b!1 -1)team;ocords]);
+		.chess.moves.enp[orig;dest;team];
+	.chess.cfg.testCheck[orig;dest;team]
+	];
   .debug.e:3;
-  $[cfg.checkmate first `w`b except team;:"Congrats you have won";res]
+  $[cfg.checkmate first `w`b except team;:("Congrats you have won";show .chess.board);res]
  }
 
 b.take:{[piece]

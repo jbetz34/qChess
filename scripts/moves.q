@@ -55,15 +55,29 @@ moves.enpassant:{[team;cords]
   atkSpaces where (last .chess.log.file)[2 3] in/: enlist each ,'[`$startSq;`$enpas]
  }
 
+moves.enp:{[orig;dest;team]
+  res:.chess.cfg.testCheck[orig;dest;team];
+  o:`A9;
+  d:`$@[string dest;1;{first string (`w`b!-1 1)[x]+"I"$y}[team]];
+  if[not type[res]=98;
+	.debug.x:.z.P;
+	.debug.catch:(o;d);
+	location.upd[board;team;o;d];
+  	.chess[team][`take]board . cfg.convertCords d;
+	.[`.chess.board;cfg.convertCords d;:;`];
+	:.chess.board
+  ]
+  res
+ }
+  
+
 moves.castle:{[orig;dest;team]
   .chess.location.upd[board;team;orig;dest];
   .chess.location.upd[board;team;(`G1`C1`G8`C8!`H1`A1`H8`A8)dest;(`G1`C1`G8`C8!`F1`D1`F8`D8)dest];
-  .[`.chess.board;cfg.convertCords dest;:;`k];
+  .[`.chess.board;cfg.convertCords dest;:;(`w`b!`k`K)team];
   .[`.chess.board;cfg.convertCords orig;:;`];
   .[`.chess.board;cfg.convertCords (`G1`C1`G8`C8!`F1`D1`F8`D8)dest;:;(`w`b!`r`R)team];
   .[`.chess.board;cfg.convertCords (`G1`C1`G8`C8!`H1`A1`H8`A8)dest;:;`];
-  .[`.chess.board;cfg.convertCords dest;:;`k]; 
-  .[`.chess.board;cfg.convertCords orig;:;`];
   .chess.log.write[team;orig;dest];
   .chess.board
  }
