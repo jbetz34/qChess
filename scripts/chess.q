@@ -2,8 +2,6 @@
 
 \d .chess
 
-system each "l ",/:ssr[string .z.f;"chess.q";] each ("moves.q";"config.q";"locations.q";"checkmate.q");
-
 showOptions:{[cords]
   piece:.chess.board . cfg.convertCords cords;
   cfg.availableOptions[piece;string cords]
